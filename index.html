@@ -722,6 +722,7 @@
         <input type="file" id="impFile" accept=".json" style="display:none" onchange="importFile(this)">
       </div>
       <div class="hint"><b>最省事</b>：手机导出 → 微信「文件传输助手」发给自己 → 电脑下载 → 导入。反过来一样。建议每周日同步一次。</div>
+      <div class="hint" id="backupTip" style="font-weight:700"></div>
       <div style="border-top:1px solid var(--line);margin:15px 0 13px"></div>
       <div style="display:flex;gap:8px">
         <button class="btn sm" style="flex:1" onclick="copyCode()">复制备份码</button>
@@ -1342,6 +1343,9 @@ function exportFile(){
   a.download='GrowthBackup_'+today()+'.json';
   document.body.appendChild(a); a.click();
   setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },1000);
+  S.lastExport = today();
+  save();
+  renderBackupTip();
   toast('已导出，记得发给自己');
 }
 function importFile(inp){
@@ -1412,7 +1416,18 @@ function wipe(){
 }
 
 /* ---------- 设置 ---------- */
+function renderBackupTip(){
+  var el = document.getElementById('backupTip');
+  if(!el) return;
+  if(!S.lastExport){ el.style.color='#d9480f'; el.textContent='⚠ 还没备份过，点上面「导出数据文件」存一份'; return; }
+  var d = daysBetween(S.lastExport, today());
+  if(d <= 0){ el.style.color='#0c8f86'; el.textContent='✓ 今天已备份'; }
+  else if(d <= 7){ el.style.color='#8d99ab'; el.textContent='上次备份 '+d+' 天前'; }
+  else { el.style.color='#d9480f'; el.textContent='⚠ 已经 '+d+' 天没备份了，清缓存会丢数据，现在导一份'; }
+}
+
 function renderSetup(){
+  renderBackupTip();
   document.getElementById('setEnd').value=S.setup.end||'';
   document.getElementById('setBudget').value=S.setup.budget||'';
   document.getElementById('setMotto').value=S.setup.motto||'';

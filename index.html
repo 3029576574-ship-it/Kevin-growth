@@ -22,10 +22,13 @@
     --s1:0 1px 2px rgba(19,29,46,.04),0 2px 8px rgba(19,29,46,.04);
     --s2:0 2px 4px rgba(19,29,46,.05),0 12px 28px rgba(19,29,46,.07);
     --safe-b:env(safe-area-inset-bottom,0px);
+    --safe-t:env(safe-area-inset-top,0px);
     --r:18px;
   }
+  html{background:#0b1322;}
   body{
     background:var(--bg); color:var(--ink); min-height:100vh;
+    overscroll-behavior-y:none;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI Variable","Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
     font-size:15px; line-height:1.55; padding-bottom:calc(76px + var(--safe-b));
     -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
@@ -40,7 +43,7 @@
       radial-gradient(1000px 400px at 88% -10%, rgba(112,72,232,.55), transparent 62%),
       radial-gradient(700px 360px at 8% 110%, rgba(214,51,108,.32), transparent 60%),
       linear-gradient(160deg,#0b1322 0%,#15224a 48%,#2c1c56 100%);
-    color:#fff; padding:20px 0 64px; position:relative; overflow:hidden;
+    color:#fff; padding:calc(20px + var(--safe-t)) 0 64px; position:relative; overflow:hidden;
   }
   .hero::before{
     content:''; position:absolute; inset:0; opacity:.35;

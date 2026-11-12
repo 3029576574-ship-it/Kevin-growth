@@ -136,6 +136,10 @@
   .gt{font-size:11.5px;font-weight:850;color:var(--ink3);margin:0 0 7px 2px;display:flex;align-items:center;gap:5px;}
   .gt .pc{margin-left:auto;font-size:10px;color:#c2cad8;font-variant-numeric:tabular-nums;}
 
+  .fxl{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink2);
+    padding:9px 2px;cursor:pointer;}
+  .fxl input{width:18px;height:18px;accent-color:var(--blue);}
+
   .ck{
     display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:13px;
     border:1px solid var(--line);margin-bottom:7px;cursor:pointer;
@@ -158,6 +162,17 @@
   }
   .ck.on .lb{color:var(--blue);text-decoration:line-through;text-decoration-thickness:1.5px;
     text-decoration-color:rgba(53,99,233,.35);}
+  .ck.pop .bx{animation:ckpop .38s cubic-bezier(.2,1.8,.4,1);}
+  @keyframes ckpop{
+    0%{transform:scale(.35);}
+    55%{transform:scale(1.2);}
+    100%{transform:scale(1.08);}
+  }
+  .ck.pop{animation:ckbg .38s ease;}
+  @keyframes ckbg{
+    0%{box-shadow:0 0 0 0 rgba(53,99,233,.35);}
+    100%{box-shadow:0 0 0 14px rgba(53,99,233,0);}
+  }
 
   /* ================= 本周计划 ================= */
   .wkhead{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
@@ -747,6 +762,10 @@
       <input type="number" id="setBudget" placeholder="2000" inputmode="numeric">
       <div class="sub" style="margin:13px 0 8px">首页格言（留空 = 自动轮换）</div>
       <input type="text" id="setMotto" placeholder="写一句给自己的话">
+      <div class="sub" style="margin:15px 0 8px">打卡反馈</div>
+      <label class="fxl"><input type="checkbox" id="setSound" onchange="S.setup.sound=this.checked;save();toast(this.checked?'打卡音效已开':'打卡音效已关')"> 音效（勾选时“叮”一声）</label>
+      <label class="fxl"><input type="checkbox" id="setVib" onchange="S.setup.vib=this.checked;save();toast(this.checked?'震动已开':'震动已关')"> 震动</label>
+      <div class="hint">震动只有安卓支持；iPhone 的 Safari 没有这个接口，所以 iPhone 上只有音效和动画。</div>
       <div style="margin-top:14px"><button class="btn pri" onclick="saveSetup()">保存设置</button></div>
     </div>
 
@@ -935,6 +954,62 @@ function toast(m){
   t.textContent=m; t.classList.add('show');
   clearTimeout(tt); tt=setTimeout(function(){ t.classList.remove('show'); },2100);
 }
+/* ---------- 音效 & 震动 ---------- */
+var FX = { ctx: null, sound: true, vib: true };
+var LAST_POP = null;
+
+function fxCtx(){
+  if(!FX.ctx){
+    try { FX.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch(e){ return null; }
+  }
+  if(FX.ctx.state === 'suspended'){ try { FX.ctx.resume(); } catch(e){} }
+  return FX.ctx;
+}
+
+function fxTone(freq, dur, o){
+  if(!FX.sound) return;
+  var ctx = fxCtx(); if(!ctx) return;
+  o = o || {};
+  var t0 = ctx.currentTime + (o.delay || 0);
+  var osc = ctx.createOscillator();
+  var g = ctx.createGain();
+  osc.type = o.type || 'sine';
+  osc.frequency.setValueAtTime(freq, t0);
+  if(o.to) osc.frequency.exponentialRampToValueAtTime(o.to, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(o.vol || 0.15, t0 + 0.006);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(g); g.connect(ctx.destination);
+  osc.start(t0); osc.stop(t0 + dur + 0.03);
+}
+
+function fxVib(p){
+  if(!FX.vib) return;
+  if(navigator.vibrate){ try { navigator.vibrate(p); } catch(e){} }
+}
+
+/* 勾上：清脆双音 + 轻震 */
+function sfxCheck(){
+  fxTone(880, 0.10, { vol: 0.15 });
+  fxTone(1318.5, 0.09, { vol: 0.055, delay: 0.012 });
+  fxVib(14);
+}
+
+/* 取消：一记下沉的短音 */
+function sfxUncheck(){
+  fxTone(420, 0.09, { vol: 0.09, to: 260 });
+  fxVib(8);
+}
+
+/* 今天全部完成：上行琶音 + 三连震 */
+function sfxDone(){
+  [523.25, 659.25, 783.99, 1046.5].forEach(function(f, i){
+    fxTone(f, 0.24, { vol: 0.13, delay: i * 0.085 });
+  });
+  fxVib([18, 45, 18, 45, 45]);
+}
+
 function esc(s){
   return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -987,7 +1062,7 @@ function renderToday(){
     html += '<div class="grp"><div class="gt">'+A.i+' '+A.n+'<span class="pc">'+dn+'/'+g.length+'</span></div>';
     g.forEach(function(it){
       var on=!!d.c[it.id];
-      html += '<div class="ck'+(on?' on':'')+'" data-id="'+it.id+'">'
+      html += '<div class="ck'+(on?' on':'')+(it.id===LAST_POP?' pop':'')+'" data-id="'+it.id+'">'
             + '<div class="bx">✓</div><div class="lb">'+esc(it.t)+'</div>'
             + '<div class="ic">'+it.i+'</div></div>';
     });
@@ -998,7 +1073,17 @@ function renderToday(){
     el.addEventListener('click', function(){
       var id=el.getAttribute('data-id');
       var dd=day(today());
-      dd.c[id]=!dd.c[id];
+      var was = !!dd.c[id];
+      dd.c[id] = !dd.c[id];
+      var nowDone = DAILY.filter(function(t){ return dd.c[t.id]; }).length;
+
+      LAST_POP = id;
+      if(!was){
+        if(nowDone === DAILY.length) sfxDone();
+        else sfxCheck();
+      } else {
+        sfxUncheck();
+      }
       save(); renderAll();
     });
   });
@@ -1010,6 +1095,7 @@ function renderToday(){
   document.getElementById('ringNum').textContent = done+'/'+total;
   var fg=document.getElementById('ringFg');
   fg.style.strokeDashoffset = String(RING_LEN*(1-pct/100));
+  LAST_POP = null;
 
   var title = done===0?'开始今天':(done===total?'今天全勤 🎉':(done>=total*0.7?'快完成了':'进行中'));
   document.getElementById('topTitle').textContent = title;
@@ -1387,6 +1473,9 @@ function renderBackupTip(){
 
 function renderSetup(){
   renderBackupTip();
+  var se=document.getElementById('setSound'), ve=document.getElementById('setVib');
+  if(se) se.checked = FX.sound;
+  if(ve) ve.checked = FX.vib;
   document.getElementById('setEnd').value=S.setup.end||'';
   document.getElementById('setBudget').value=S.setup.budget||'';
   document.getElementById('setMotto').value=S.setup.motto||'';
@@ -1583,6 +1672,8 @@ function renderAll(){
 
 document.addEventListener('DOMContentLoaded', function(){
   loadState();
+  FX.sound = S.setup.sound !== false;
+  FX.vib   = S.setup.vib   !== false;
   if(!tryImportPackFromHash()) tryImportFromHash();
   document.querySelectorAll('nav button').forEach(function(b){
     b.addEventListener('click', function(){ switchTab(b.getAttribute('data-t')); });

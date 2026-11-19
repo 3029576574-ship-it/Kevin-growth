@@ -1,0 +1,7 @@
+.DS_Store
+Thumbs.db
+*.bak
+sync.sh
+sanitize2.py
+sanitize_publish.py
+sap.html

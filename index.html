@@ -59,6 +59,7 @@
     --tint-green:#1e2a23; --tint-green-2:#1a2620;
     --tint-warm:#241f17; --tint-red:#241a18;
     --amber:#b8843f; --danger:#b85a4a;
+    --brand:var(--mark);
     --s1:none; --s2:none;
     --r:0px;
   }
@@ -777,7 +778,7 @@
       line-height:1.05;
     }
     .hd-logo em{ font-style:normal; font-weight:400; font-size:13px; color:var(--muted); }
-    .hd-mark{ width:22px; height:22px; background:var(--mark); flex:none; }
+    .hd-mark{ width:22px; height:22px; background:var(--brand); flex:none; }
 
     /* 大标题：跨出色块边界 */
     .hd-title{
@@ -1110,9 +1111,24 @@
     --tint-green:#1e1e1e; --tint-green-2:#191919; --tint-warm:#221f1a; --tint-red:#221a1a;
     --accent-soft:rgba(216,210,196,.24);
   }
+  html[data-theme="kessler"]{
+    --paper:#f8f7f3; --paper-2:#ffffff; --paper-3:#eeede7;
+    --ink:#0f141e; --ink-2:#4a4f59; --muted:#6e737b;
+    --rule:#dcdbd3; --grid-line:rgba(15,20,30,.05);
+    --hl:rgba(15,20,30,.04); --hl-2:rgba(15,20,30,.08); --hl-3:rgba(15,20,30,.16);
+    --field:#1f40be; --field-ink:#ffffff;
+    --mark:#1f40be; --mark-ink:#ffffff;
+    --brand:#d9241b;
+    --bone:#0f141e; --bone-2:#3a3f49;
+    --hairline-2:#cfcec6; --line-2:#dcdbd3; --line-3:#cfcec6; --line-4:#b6b5ac; --line-5:#9a998f;
+    --tint-green:#e8ecef; --tint-green-2:#eff1f3; --tint-warm:#f3efe6; --tint-red:#f7e6e4;
+    --orange:#a85a12; --pink:#8a3b57; --purple:#4a4a8a; --teal:#1f6f6a; --red:#d9241b;
+    --amber:#8a5a12; --danger:#d9241b;
+    --accent-soft:rgba(31,64,190,.16);
+  }
   html[data-theme="paper"]{
     --paper:#f4f1ea; --paper-2:#fffdf8; --paper-3:#e9e4d8;
-    --ink:#1a1917; --ink-2:#4f4a43; --muted:#8b837a;
+    --ink:#1a1917; --ink-2:#4f4a43; --muted:#6e685f;
     --rule:#d8d2c4; --grid-line:rgba(0,0,0,.05);
     --hl:rgba(0,0,0,.04); --hl-2:rgba(0,0,0,.08); --hl-3:rgba(0,0,0,.16);
     --field:#1f6f4a; --field-ink:#ffffff;
@@ -2563,6 +2579,7 @@ var THEMES = [
   { k:'indigo',   n:'靛蓝', f:'#2f3f7a', m:'#a9b8ee', p:'#13151c' },
   { k:'amber',    n:'琥珀', f:'#7a5a1f', m:'#e8c887', p:'#17140e' },
   { k:'graphite', n:'石墨', f:'#4a4a46', m:'#d8d2c4', p:'#141414' },
+  { k:'kessler',  n:'档案蓝', f:'#1f40be', m:'#d9241b', p:'#ffffff' },
   { k:'paper',    n:'纸白', f:'#1f6f4a', m:'#1a6b46', p:'#fffdf8' }
 ];
 

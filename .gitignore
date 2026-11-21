@@ -1,6 +1,8 @@
 .DS_Store
 Thumbs.db
 *.bak
+*_bak_icon
+_fav16.png
 sync.sh
 sanitize2.py
 sanitize_publish.py

@@ -13,6 +13,18 @@
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <title>成长台</title>
+<script>
+/* 开屏前就套上主题，避免闪一下默认色 */
+(function(){
+  try{
+    var raw = localStorage.getItem('growth_v3');
+    if(!raw) return;
+    var o = JSON.parse(raw);
+    var k = o && o.setup && o.setup.theme;
+    if(k && k !== 'green') document.documentElement.setAttribute('data-theme', k);
+  }catch(e){}
+})();
+</script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   :root{
@@ -37,7 +49,16 @@
     --orange:#c08a4a; --pink:#9a8f80; --purple:#8a8272; --teal:#4a6b52; --red:#c9645a;
     --surface-0:var(--paper); --surface-1:var(--paper); --surface-2:var(--paper-2); --surface-3:var(--paper-3);
     --hairline:var(--rule); --hairline-2:#33302a; --line-2:#2a2823; --line-3:#33302a;
+    --grid-line:rgba(255,255,255,.030);
+    --hl:rgba(255,255,255,.045);      /* 纸面上的轻微高光（hover/按下） */
+    --hl-2:rgba(255,255,255,.13);
+    --hl-3:rgba(255,255,255,.22);
     --accent-soft:rgba(143,214,174,.28);
+    /* 这些之前被 CSS 引用但没定义，补上 */
+    --line-4:#423e36; --line-5:#5c5548;
+    --tint-green:#1e2a23; --tint-green-2:#1a2620;
+    --tint-warm:#241f17; --tint-red:#241a18;
+    --amber:#b8843f; --danger:#b85a4a;
     --s1:none; --s2:none;
     --r:0px;
   }
@@ -46,8 +67,8 @@
     font-family:ui-monospace,"SF Mono",Menlo,Consolas,"PingFang SC","Microsoft YaHei",sans-serif;
     background-color:var(--bg);
     background-image:
-      linear-gradient(rgba(255,255,255,.030) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.030) 1px, transparent 1px);
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size:24px 24px;
     color:var(--ink); min-height:100vh;
     overscroll-behavior-y:none;
@@ -68,7 +89,7 @@
   }
   .hero::before{
     content:''; position:absolute; inset:0; opacity:.35;
-    background-image:radial-gradient(rgba(255,255,255,.5) .8px, transparent .8px);
+    background-image:radial-gradient(var(--ink-2) .8px, transparent .8px);
     background-size:22px 22px;
     mask-image:linear-gradient(180deg,#000 0%,transparent 78%);
     -webkit-mask-image:linear-gradient(180deg,#000 0%,transparent 78%);
@@ -92,7 +113,7 @@
   }
   .motto{
     margin-top:16px;font-size:14px;line-height:1.65;opacity:.95;
-    padding-left:12px;border-left:4px solid rgba(255,255,255,.45);cursor:pointer;
+    padding-left:12px;border-left:4px solid var(--ink-2);cursor:pointer;
     transition:.2s;
   }
   .motto:active{opacity:.7;}
@@ -139,6 +160,27 @@
     gap:32px; width:100%; max-width:340px; text-align:center;
   }
   .sp-brand{ width:100%; display:flex; flex-direction:column; align-items:center; }
+  /* ═══ 主题色板 ═══ */
+  .tbs{ display:flex; gap:8px; flex-wrap:wrap; }
+  .tb{
+    position:relative; width:46px; height:46px; padding:0; cursor:pointer;
+    border:1px solid var(--rule-2); background:var(--c-paper);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .tb i{
+    position:absolute; left:8px; top:8px; width:16px; height:16px;
+    background:var(--c-field); display:block;
+  }
+  .tb u{
+    position:absolute; right:8px; bottom:8px; width:9px; height:9px;
+    background:var(--c-mark); display:block; text-decoration:none;
+  }
+  .tb.on{ border-color:var(--mark); }
+  .tb.on::after{
+    content:''; position:absolute; inset:2px; border:1px solid var(--mark); pointer-events:none;
+  }
+  .tb:focus-visible{ outline:2px solid var(--mark); outline-offset:2px; }
+
   /* 按住进入 */
   .hold{
     position:relative; display:inline-flex; align-items:center; justify-content:center;
@@ -172,7 +214,7 @@
   #spTechCanvas{ display:block; width:100%; height:100%; touch-action:pan-y; cursor:crosshair; }
   .sp-logo svg{ width:100%; height:100%; display:block; }
   .sp-name{ font-size:34px; font-weight:600; letter-spacing:4px; margin-top:16px; }
-  .sp-sub{ font-size:14px; color:rgba(255,255,255,.62); margin-top:8px;  }
+  .sp-sub{ font-size:14px; color:var(--ink-2); margin-top:8px;  }
 
   .sp-side{ display:none; }
 
@@ -190,7 +232,7 @@
   }
   @keyframes spFill{ to{ transform:scaleX(1); } }
   .sp-tip{
-    font-size:12px; color:rgba(255,255,255,.42);
+    font-size:12px; color:var(--muted);
     margin-top:12px; text-align:center; letter-spacing:.5px;
   }
 
@@ -215,7 +257,7 @@
       background:var(--hairline);
       border:none;
     }
-    .sp-card span{ font-size:13px; color:rgba(255,255,255,.6); }
+    .sp-card span{ font-size:13px; color:var(--ink-2); }
     .sp-card b{ margin-left:auto; font-size:20px; font-weight:800; letter-spacing:.5px; }
 
     .sp-inner{ flex-wrap:wrap; }
@@ -283,7 +325,7 @@
     transition:background .14s;
   }
   .ck:last-child{border-bottom:none;}
-  .ck:active{background:rgba(255,255,255,.04);}
+  .ck:active{background:var(--hl);}
   .ck .bx{
     width:21px;height:21px;border-radius:0;flex:none;
     display:flex;align-items:center;justify-content:center;
@@ -812,9 +854,9 @@
 
   /* 电脑端交互态：只在有精确指针的设备上生效 */
   @media (hover:hover) and (pointer:fine){
-    .ck:hover{ background:rgba(255,255,255,.028); }
-    nav button:hover{ background:rgba(255,255,255,.045); }
-    .tool:hover .tbx{ border-color:rgba(255,255,255,.2); }
+    .ck:hover{ background:var(--hl); }
+    nav button:hover{ background:var(--hl); }
+    .tool:hover .tbx{ border-color:var(--hl-3); }
     .btn:hover{ filter:brightness(1.12); }
     .jp:hover{ border-color:var(--hairline-2); }
   }
@@ -823,11 +865,11 @@
   ::-webkit-scrollbar{ width:11px; height:11px; }
   ::-webkit-scrollbar-track{ background:transparent; }
   ::-webkit-scrollbar-thumb{
-    background:rgba(255,255,255,.13); border-radius:0;
+    background:var(--hl-2); border-radius:0;
     border:3px solid transparent; background-clip:content-box;
   }
   ::-webkit-scrollbar-thumb:hover{
-    background:rgba(255,255,255,.22); background-clip:content-box;
+    background:var(--hl-3); background-clip:content-box;
   }
 
   /* 主页分栏包裹：手机端透明，保持单列顺序 */
@@ -1017,6 +1059,70 @@
       transition-duration:.01ms !important;
       scroll-behavior:auto !important;
     }
+  }
+
+  /* ═══════════ 主题 · 同一套结构，换六个色系 ═══════════ */
+  html[data-theme="rust"]{
+    --paper:#0f0c0b; --paper-2:#171312; --paper-3:#201a18;
+    --ink:#f2ecdc; --ink-2:#cdbfb7; --muted:#8a7a72;
+    --rule:#2a2220; --grid-line:rgba(255,255,255,.028);
+    --hl:rgba(255,255,255,.042); --hl-2:rgba(255,255,255,.12); --hl-3:rgba(255,255,255,.2);
+    --field:#8c3a2a; --field-ink:#ffffff;
+    --mark:#e6a68f;
+    --bone:#f2ecdc; --bone-2:#d6c4bb;
+    --hairline-2:#332a26; --line-2:#2a2220; --line-3:#332a26; --line-4:#4a3d38; --line-5:#5f4f48;
+    --tint-green:#241c19; --tint-green-2:#1e1714; --tint-warm:#241d15; --tint-red:#241513;
+    --accent-soft:rgba(230,166,143,.26);
+  }
+  html[data-theme="indigo"]{
+    --paper:#0c0d12; --paper-2:#13151c; --paper-3:#1a1d26;
+    --ink:#eceaf2; --ink-2:#c2c4d0; --muted:#7d8091;
+    --rule:#232734; --grid-line:rgba(255,255,255,.028);
+    --hl:rgba(255,255,255,.042); --hl-2:rgba(255,255,255,.12); --hl-3:rgba(255,255,255,.2);
+    --field:#2f3f7a; --field-ink:#ffffff;
+    --mark:#a9b8ee;
+    --bone:#eceaf2; --bone-2:#c9cbdb;
+    --hairline-2:#2c3142; --line-2:#232734; --line-3:#2c3142; --line-4:#3f4760; --line-5:#555e7d;
+    --tint-green:#191d2a; --tint-green-2:#151824; --tint-warm:#221d16; --tint-red:#241a1c;
+    --accent-soft:rgba(169,184,238,.26);
+  }
+  html[data-theme="amber"]{
+    --paper:#0f0d09; --paper-2:#17140e; --paper-3:#201c14;
+    --ink:#f2ecdc; --ink-2:#cfc4ad; --muted:#8a8072;
+    --rule:#2a251b; --grid-line:rgba(255,255,255,.028);
+    --hl:rgba(255,255,255,.042); --hl-2:rgba(255,255,255,.12); --hl-3:rgba(255,255,255,.2);
+    --field:#7a5a1f; --field-ink:#ffffff;
+    --mark:#e8c887;
+    --bone:#f2ecdc; --bone-2:#d8cdb4;
+    --hairline-2:#332d20; --line-2:#2a251b; --line-3:#332d20; --line-4:#4a422e; --line-5:#5f543b;
+    --tint-green:#242117; --tint-green-2:#1e1b13; --tint-warm:#241f17; --tint-red:#241a18;
+    --accent-soft:rgba(232,200,135,.26);
+  }
+  html[data-theme="graphite"]{
+    --paper:#0c0c0c; --paper-2:#141414; --paper-3:#1c1c1c;
+    --ink:#f2efe8; --ink-2:#c6c2b8; --muted:#807c74;
+    --rule:#262626; --grid-line:rgba(255,255,255,.026);
+    --hl:rgba(255,255,255,.04); --hl-2:rgba(255,255,255,.11); --hl-3:rgba(255,255,255,.18);
+    --field:#4a4a46; --field-ink:#ffffff;
+    --mark:#d8d2c4;
+    --bone:#f2efe8; --bone-2:#cfcabe;
+    --hairline-2:#303030; --line-2:#262626; --line-3:#303030; --line-4:#454545; --line-5:#5a5a5a;
+    --tint-green:#1e1e1e; --tint-green-2:#191919; --tint-warm:#221f1a; --tint-red:#221a1a;
+    --accent-soft:rgba(216,210,196,.24);
+  }
+  html[data-theme="paper"]{
+    --paper:#f4f1ea; --paper-2:#fffdf8; --paper-3:#e9e4d8;
+    --ink:#1a1917; --ink-2:#4f4a43; --muted:#8b837a;
+    --rule:#d8d2c4; --grid-line:rgba(0,0,0,.05);
+    --hl:rgba(0,0,0,.04); --hl-2:rgba(0,0,0,.08); --hl-3:rgba(0,0,0,.16);
+    --field:#1f6f4a; --field-ink:#ffffff;
+    --mark:#1a6b46;
+    --bone:#1a1917; --bone-2:#3a3730;
+    --hairline-2:#cfc8b8; --line-2:#d8d2c4; --line-3:#cfc8b8; --line-4:#b8b0a0; --line-5:#9a9182;
+    --tint-green:#e6efe8; --tint-green-2:#eef4ef; --tint-warm:#f4ece0; --tint-red:#f6e8e6;
+    --orange:#9a5a1a; --pink:#7a4a5e; --purple:#4a4560; --teal:#2f6f6a; --red:#a8382c;
+    --amber:#8a5a1a; --danger:#a8382c;
+    --accent-soft:rgba(31,111,74,.18);
   }
   /* ═══ TechText 大字 ═══ */
   .sr-only{
@@ -1331,6 +1437,11 @@
   <section id="s-setup" data-title="设置">
   <div class="scols">
     <div class="scol">
+    <div class="card">
+      <h2>主题 <span class="n" id="themeName">墨绿</span></h2>
+      <div class="tbs" id="themeBar"></div>
+      <div class="hint">只换配色，结构不动。跟着这台设备走，不同步。</div>
+    </div>
     <div class="card">
       <h2>格言库</h2>
       <p class="hint" style="margin-bottom:10px">每天随机一条显示在封面。一行一条，粘贴后点导入。</p>
@@ -2445,6 +2556,57 @@ function hideSplash(){
   setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 520);
 }
 
+/* ---------- 主题切换 ---------- */
+var THEMES = [
+  { k:'green',    n:'墨绿', f:'#1f6f4a', m:'#8fd6ae', p:'#171614' },
+  { k:'rust',     n:'砖红', f:'#8c3a2a', m:'#e6a68f', p:'#171312' },
+  { k:'indigo',   n:'靛蓝', f:'#2f3f7a', m:'#a9b8ee', p:'#13151c' },
+  { k:'amber',    n:'琥珀', f:'#7a5a1f', m:'#e8c887', p:'#17140e' },
+  { k:'graphite', n:'石墨', f:'#4a4a46', m:'#d8d2c4', p:'#141414' },
+  { k:'paper',    n:'纸白', f:'#1f6f4a', m:'#1a6b46', p:'#fffdf8' }
+];
+
+function currentTheme(){
+  return (S.setup && S.setup.theme) ? S.setup.theme : 'green';
+}
+
+function applyTheme(k){
+  if (k === 'green' || !k) document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', k);
+}
+
+function setTheme(k){
+  if (!S.setup) S.setup = {};
+  S.setup.theme = k;
+  applyTheme(k);
+  save();
+  renderThemeBar();
+  var m = THEMES.filter(function(t){ return t.k === k; })[0];
+  toast('主题：' + (m ? m.n : k));
+}
+
+function renderThemeBar(){
+  var bar = document.getElementById('themeBar');
+  if (!bar) return;
+  var cur = currentTheme();
+  bar.innerHTML = THEMES.map(function(t){
+    return '<button class="tb' + (t.k === cur ? ' on' : '') + '" data-k="' + t.k + '" title="' + t.n + '"'
+         + ' style="--c-field:' + t.f + ';--c-mark:' + t.m + ';--c-paper:' + t.p + '">'
+         + '<i></i><u></u></button>';
+  }).join('');
+  var nm = document.getElementById('themeName');
+  var m = THEMES.filter(function(t){ return t.k === cur; })[0];
+  if (nm) nm.textContent = m ? m.n : cur;
+
+  if (!bar.__bound) {
+    bar.__bound = true;
+    bar.addEventListener('click', function(e){
+      var b = e.target.closest ? e.target.closest('.tb') : null;
+      if (b && b.getAttribute('data-k')) setTheme(b.getAttribute('data-k'));
+    });
+  }
+}
+
 /* ---------- 封面 · 按住进入 ---------- */
 function bindHold(){
   var btn = document.getElementById('spHold');
@@ -3132,7 +3294,7 @@ function renderAll(){
   renderHero(); renderToday(); renderWeek(); renderAreaProgress();
   renderWeeks(); renderTimeline('timelineGoals'); renderTools(); renderMilestones();
   renderGoals(); renderLog(); renderSetup(); renderPlan(); renderCountdowns(); renderJobs();
-  renderSide(); renderHeroDesk(); renderQuoteCard(); renderChart(); bindChart(); renderQuotesState(); checkBackupBar();
+  renderSide(); renderHeroDesk(); renderQuoteCard(); applyTheme(currentTheme()); renderThemeBar(); renderChart(); bindChart(); renderQuotesState(); checkBackupBar();
 }
 
 // 格言库 · 内置 60 条，每天按日期随机轮换

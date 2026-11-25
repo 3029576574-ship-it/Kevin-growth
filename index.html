@@ -60,6 +60,12 @@
     --tint-warm:#241f17; --tint-red:#241a18;
     --amber:#b8843f; --danger:#b85a4a;
     --brand:var(--mark);
+    --block:var(--ink); --block-ink:var(--paper);
+    --block-sub:rgba(15,14,12,.62); --block-line:rgba(15,14,12,.14);
+    --block-hi:var(--mark);
+    --hero-btn:var(--ink); --hero-btn-ink:var(--paper);
+    --nav-bg:rgba(18,17,14,.94); --nav-bg-2:rgba(15,14,12,.94);
+    --nav-fg:var(--mark); --nav-fg-dim:rgba(242,239,232,.66);
     --s1:none; --s2:none;
     --r:0px;
   }
@@ -132,19 +138,19 @@
   .fstats{
     margin-top:0;position:relative;z-index:3;
     display:grid;grid-template-columns:repeat(4,1fr);
-    background:var(--bone);color:var(--paper);
+    background:var(--block);color:var(--block-ink);
     border:none;border-radius:0;overflow:hidden;
   }
   @media(max-width:339px){ .fstats{grid-template-columns:repeat(2,1fr);} }
   .fs{
-    background:transparent;border:none;border-left:1px solid var(--line);
-    border-radius:0;padding:16px 4px;text-align:center;
+    background:transparent;border:none;border-left:1px solid var(--block-line);
+    border-radius:0;padding:16px 4px;text-align:center;background:transparent;
   }
   .fs:first-child{border-left:none;}
   .fs .v{
-    color:var(--paper);
+    color:var(--block-ink);
     letter-spacing:-.6px;font-size:20px;font-weight:600;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.4px;}
-  .fs .k{font-size:10px;color:rgba(15,14,12,.6);margin-top:4px;font-weight:700;}
+  .fs .k{font-size:10px;color:var(--block-sub);margin-top:4px;font-weight:700;}
 
   /* ================= 进入界面 ================= */
   #splash{
@@ -399,7 +405,7 @@
     background:var(--surface-2);color:#8a8272;
   }
   .btn:active{transform:scale(.97);}
-  .btn.pri{background:var(--ink);color:var(--surface-2);
+  .btn.pri{background:var(--block);color:var(--block-ink);
     box-shadow:none;}
   .btn.sm{padding:8px 12px;font-size:13px;border-radius:0;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px dashed var(--surface-2);font-size:13px;}
   .sp:last-child{border-bottom:none;}
@@ -460,14 +466,14 @@
     position:fixed; top:0; left:0; right:0; z-index:60;
     display:none; align-items:center; gap:12px;
     padding:8px 16px;
-    background:var(--ink); color:var(--paper);
+    background:var(--block); color:var(--block-ink);
     font-size:12px;
   }
   .backup-bar.on{ display:flex; }
   .backup-bar span{ flex:1; }
   .backup-bar button{
-    background:transparent; color:var(--paper);
-    border:1px solid rgba(15,14,12,.28);
+    background:transparent; color:var(--block-ink);
+    border:1px solid var(--block-line);
     padding:4px 12px; font-size:12px; font-family:inherit; cursor:pointer;
   }
   .backup-bar button:hover{ background:rgba(15,14,12,.1); }
@@ -493,16 +499,16 @@
 
   /* 统计块：米白实底 + 深墨字，和「记一笔」同一套 */
   .st{
-    background:var(--ink); color:var(--paper);
+    background:var(--block); color:var(--block-ink);
     border-radius:0; text-align:center;
     padding:8px 8px; transition:background .16s;
   }
-  .st:hover{ background:var(--bone-2); }
+  .st:hover{ background:var(--block); filter:brightness(1.08); }
   .st .v{
-    font-size:18px; font-weight:700; color:var(--paper);
+    font-size:18px; font-weight:700; color:var(--block-ink);
     font-variant-numeric:tabular-nums; letter-spacing:-.3px;
   }
-  .st .k{ font-size:11px; color:rgba(15,14,12,.62); margin-top:4px; font-weight:600; }
+  .st .k{ font-size:11px; color:var(--block-sub); margin-top:4px; font-weight:600; }
 
   /* 随笔：底部按钮 + 弹窗 */
   /* 随笔卡：内容占满，按钮贴到卡片底部 */
@@ -724,7 +730,7 @@
   /* ================= 底部导航 ================= */
   nav{
     position:fixed;left:0;right:0;bottom:0;z-index:30;
-    background:rgba(18,17,14,.94);
+    background:var(--nav-bg);
     -webkit-backdrop-filter:blur(24px) saturate(140%);
     backdrop-filter:blur(24px) saturate(140%);
     border-top:1px solid var(--hairline);
@@ -743,7 +749,7 @@
 
   .toast{
     position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(12px) scale(.96);
-    background:var(--ink);color:var(--surface-2);font-size:13px;padding:12px 20px;border-radius:0;opacity:0;pointer-events:none;transition:.26s cubic-bezier(.34,1.56,.64,1);
+    background:var(--block);color:var(--block-ink);font-size:13px;padding:12px 20px;border-radius:0;opacity:0;pointer-events:none;transition:.26s cubic-bezier(.34,1.56,.64,1);
     max-width:86%;text-align:center;box-shadow:none;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
@@ -815,13 +821,13 @@
 
     .hd-actions{ display:flex; align-items:center; gap:24px; }
     .hd-btn{
-      background:var(--ink); color:var(--paper);
+      background:var(--hero-btn); color:var(--hero-btn-ink);
       border:none; border-radius:0; cursor:pointer;
       min-height:52px; padding:0 32px;
       font-family:inherit; font-size:16px; font-weight:500; letter-spacing:.2px;
       transition:background-color .18s;
     }
-    .hd-btn:hover{ background:var(--ink-2); }
+    .hd-btn:hover{ background:var(--hero-btn); filter:brightness(.94); }
     .hd-link{
       font-size:16px; color:var(--ink-2); cursor:pointer;
       text-decoration:underline; text-underline-offset:.34em;
@@ -839,7 +845,7 @@
     }
     .hd-figure b{
       display:block;
-      color:var(--bone);
+      color:var(--field-ink);
       font-size: clamp(5.4rem, 10.2vw, 10rem);
       font-weight:700; line-height:.86; letter-spacing:-.05em;
       font-variant-numeric: tabular-nums;
@@ -995,22 +1001,22 @@
       transition:background-color .22s ease;
     }
     nav.scrolled{
-      background:rgba(15,14,12,.94);
+      background:var(--nav-bg-2);
       -webkit-backdrop-filter:blur(20px); backdrop-filter:blur(20px);
     }
     nav::before{ content:none; }
     nav button{
       flex:none; flex-direction:row; gap:8px;
       padding:8px 16px; font-size:14px;
-      color:rgba(242,239,232,.66);
+      color:var(--nav-fg-dim);
       transition:color .16s;
     }
     nav button.on{
-      color:var(--mark);
+      color:var(--nav-fg);
       text-decoration:underline; text-underline-offset:6px;
       text-decoration-thickness:2px; text-decoration-color:var(--mark);
     }
-    nav button:hover{ color:var(--bone); }
+    nav button:hover{ color:var(--nav-fg); }
     nav button .ni{ width:16px; height:16px; }
 
     .side-head, .side-foot{ display:none; }
@@ -1119,6 +1125,12 @@
     --field:#1f40be; --field-ink:#ffffff;
     --mark:#1f40be; --mark-ink:#ffffff;
     --brand:#d9241b;
+    --block:#1f40be; --block-ink:#ffffff;
+    --block-sub:rgba(255,255,255,.74); --block-line:rgba(255,255,255,.22);
+    --block-hi:#c8d3ff;
+    --hero-btn:#ffffff; --hero-btn-ink:#1f40be;
+    --nav-bg:rgba(248,247,243,.96); --nav-bg-2:rgba(248,247,243,.94);
+    --nav-fg:#1f40be; --nav-fg-dim:var(--muted);
     --bone:#0f141e; --bone-2:#3a3f49;
     --hairline-2:#cfcec6; --line-2:#dcdbd3; --line-3:#cfcec6; --line-4:#b6b5ac; --line-5:#9a998f;
     --tint-green:#e8ecef; --tint-green-2:#eff1f3; --tint-warm:#f3efe6; --tint-red:#f7e6e4;
@@ -1128,6 +1140,12 @@
   }
   html[data-theme="paper"]{
     --paper:#f4f1ea; --paper-2:#fffdf8; --paper-3:#e9e4d8;
+    --block:#1f6f4a; --block-ink:#ffffff;
+    --block-sub:rgba(255,255,255,.74); --block-line:rgba(255,255,255,.22);
+    --block-hi:#cfe8d9;
+    --hero-btn:#ffffff; --hero-btn-ink:#1f6f4a;
+    --nav-bg:rgba(248,247,243,.96); --nav-bg-2:rgba(248,247,243,.94);
+    --nav-fg:#1f6f4a; --nav-fg-dim:var(--muted);
     --ink:#1a1917; --ink-2:#4f4a43; --muted:#6e685f;
     --rule:#d8d2c4; --grid-line:rgba(0,0,0,.05);
     --hl:rgba(0,0,0,.04); --hl-2:rgba(0,0,0,.08); --hl-3:rgba(0,0,0,.16);
@@ -1271,7 +1289,7 @@
 
 <div class="wrap">
   <div class="fstats">
-    <div class="fs"><div class="v" id="fsToday" style="color:var(--blue)">0/12</div><div class="k">今日打卡</div></div>
+    <div class="fs"><div class="v" id="fsToday" style="color:var(--block-hi)">0/12</div><div class="k">今日打卡</div></div>
     <div class="fs"><div class="v" id="fsStreak" >0</div><div class="k">连续天数</div></div>
     <div class="fs"><div class="v" id="fsMoney" >0</div><div class="k">本月支出</div></div>
     <div class="fs"><div class="v" id="fsWeek" >0/6</div><div class="k">本周任务</div></div>
